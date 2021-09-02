@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000/") // Allow to Access from localhost
 @RestController
@@ -50,6 +52,17 @@ public class EmployeeController {
         Employee employeeUpdated = employeeRepository.save(employee);
 
         return ResponseEntity.ok(employeeUpdated);
+    }
+
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable Long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employe Not Exist with id : " + id));
+
+        Map<String, Boolean> response = new HashMap<>();
+        employeeRepository.delete(employee);
+        response.put("deleted", Boolean.TRUE);
+        return ResponseEntity.ok(response);
     }
 
 }
